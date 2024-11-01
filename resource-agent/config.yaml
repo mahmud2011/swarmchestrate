@@ -1,0 +1,13 @@
+app:
+  type: "cloud"
+  heartbeatinterval: 10
+  deploymenttimeout: 60
+
+httpserver:
+  port: 8082
+  gracefulshutdowntimeout: 5
+
+registersvc:
+  host: 172.18.255.27
+  port: 80
+  timeout: 5

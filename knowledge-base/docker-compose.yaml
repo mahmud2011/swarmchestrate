@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:17.4-alpine
+    container_name: postgres
+    environment:
+      POSTGRES_USER: foo
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: knowledge_base
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:9.3.0
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: foo@bar.com
+      PGADMIN_DEFAULT_PASSWORD: pass
+    ports:
+      - "8089:80"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:

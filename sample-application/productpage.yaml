@@ -1,0 +1,139 @@
+# Copyright Istio Authors
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
+##################################################################################################
+# This file defines the services, service accounts, and deployments for the Bookinfo sample.
+#
+# To apply all 4 Bookinfo services, their corresponding service accounts, and deployments:
+#
+#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+#
+# Alternatively, you can deploy any resource separately:
+#
+#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l service=reviews # reviews Service
+#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l account=reviews # reviews ServiceAccount
+#   kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml -l app=reviews,version=v3 # reviews-v3 Deployment
+##################################################################################################
+
+##################################################################################################
+# Productpage services
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: productpage
+  labels:
+    app: productpage
+    service: productpage
+spec:
+  ports:
+  - port: 9080
+    name: http
+  selector:
+    app: productpage
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bookinfo-productpage
+  labels:
+    account: productpage
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productpage-v1
+  labels:
+    app: productpage
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productpage
+      version: v1
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9080"
+        prometheus.io/path: "/metrics"
+      labels:
+        app: productpage
+        version: v1
+    spec:
+      serviceAccountName: bookinfo-productpage
+      containers:
+      - name: productpage
+        image: docker.io/istio/examples-bookinfo-productpage-v1:1.20.2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: DETAILS_HOSTNAME
+          valueFrom:
+            configMapKeyRef:
+              name: istio-sample
+              key: DETAILS_HOSTNAME
+        - name: DETAILS_SERVICE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: istio-sample
+              key: DETAILS_SERVICE_PORT
+        - name: REVIEWS_HOSTNAME
+          valueFrom:
+            configMapKeyRef:
+              name: istio-sample
+              key: REVIEWS_HOSTNAME
+        - name: REVIEWS_SERVICE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: istio-sample
+              key: REVIEWS_SERVICE_PORT
+        ports:
+        - containerPort: 9080
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: tmp
+        emptyDir: {}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: istio-sample
+data:
+  DETAILS_HOSTNAME: "[FOG_CLUSTER_IP]"
+  DETAILS_SERVICE_PORT: 80/istio-sample/details
+  REVIEWS_HOSTNAME: "[FOG_CLUSTER_IP]"
+  REVIEWS_SERVICE_PORT: 80/istio-sample/reviews
+---
+# https://kubernetes.github.io/ingress-nginx/examples/rewrite/#examples
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: istio-sample
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /istio-sample(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: productpage
+            port:
+              number: 9080

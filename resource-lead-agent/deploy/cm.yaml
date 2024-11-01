@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resource-lead-agent
+
+data:
+  config.yaml: |
+    app:
+      type: cloud
+      schedulerinterval: 10
+      applicationheartbeattimeout: 30
+      nodeheartbeattimeout: 15
+
+    httpserver:
+      port: 8081
+      gracefulshutdowntimeout: 5
+
+    postgresdb:
+      host: host.docker.internal
+      port: 5432
+      user: foo
+      pass: pass
+      dbname: knowledge_base
+      sslmode: disable
+      timezone: UTC
+
+    raft:
+      id: 1
+      peers:
+        - http://172.18.0.2:8080
+        - http://172.18.0.7:8080
+        - http://172.18.0.12:8080

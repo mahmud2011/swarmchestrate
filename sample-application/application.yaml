@@ -1,0 +1,10 @@
+apiVersion: swarmchestrate.tu-berlin.de/v1
+kind: Application
+metadata:
+  labels:
+    user-labels-1-key: user-labels-1-value
+  name: istio-sample
+  qos:
+    energy: 1.0
+    pricing: 0.0
+    performance: 0.0

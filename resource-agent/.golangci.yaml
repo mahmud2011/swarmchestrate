@@ -1,0 +1,18 @@
+run:
+  timeout: 10m
+
+output:
+  show-stats: true
+
+linters:
+  disable-all: true
+  enable:
+    - gosimple
+    - govet
+
+linters-settings:
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(github.com)

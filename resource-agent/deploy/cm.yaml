@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resource-agent
+data:
+  config.yaml: |
+    app:
+      type: "cloud"
+      heartbeatinterval: 10
+      deploymenttimeout: 60
+
+    httpserver:
+      port: 8082
+      gracefulshutdowntimeout: 5
+
+    registersvc:
+      host: 172.18.0.1
+      port: 80
+      timeout: 5

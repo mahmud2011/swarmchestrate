@@ -1,0 +1,461 @@
+{
+  "name": "swarmchestrate",
+  "version": "1",
+  "items": [
+    {
+      "type": "http",
+      "name": "Add application",
+      "filename": "Add application.bru",
+      "seq": 7,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/applications",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "multipartForm",
+          "json": "{\n  \"name\": \"application-sample\",\n  \"labels\": {\n      \"swarmchestrate.tu-berlin.de/something\": \"something\"\n    },\n    \"qos\":\n      {\n        \"energy\": 1\n      },\n    \"cloud_svc\": [\n                  {\n                    \"apiVersion\": \"v1\",\n                    \"kind\": \"Service\",\n                    \"metadata\": {\n                      \"name\": \"details\",\n                      \"labels\": {\n                        \"app\": \"details\",\n                        \"service\": \"details\"\n                      }\n                    },\n                    \"spec\": {\n                      \"ports\": [\n                        {\n                          \"port\": 9080,\n                          \"name\": \"http\"\n                        }\n                      ],\n                      \"selector\": {\n                        \"app\": \"details\"\n                      }\n                    }\n                  },\n                  {\n                    \"apiVersion\": \"v1\",\n                    \"kind\": \"ServiceAccount\",\n                    \"metadata\": {\n                      \"name\": \"bookinfo-details\",\n                      \"labels\": {\n                        \"account\": \"details\"\n                      }\n                    }\n                  },\n                  {\n                    \"apiVersion\": \"apps/v1\",\n                    \"kind\": \"Deployment\",\n                    \"metadata\": {\n                      \"name\": \"details-v1\",\n                      \"labels\": {\n                        \"app\": \"details\",\n                        \"version\": \"v1\"\n                      }\n                    },\n                    \"spec\": {\n                      \"replicas\": 1,\n                      \"selector\": {\n                        \"matchLabels\": {\n                          \"app\": \"details\",\n                          \"version\": \"v1\"\n                        }\n                      },\n                      \"template\": {\n                        \"metadata\": {\n                          \"labels\": {\n                            \"app\": \"details\",\n                            \"version\": \"v1\"\n                          }\n                        },\n                        \"spec\": {\n                          \"serviceAccountName\": \"bookinfo-details\",\n                          \"containers\": [\n                            {\n                              \"name\": \"details\",\n                              \"image\": \"docker.io/istio/examples-bookinfo-details-v1:1.20.2\",\n                              \"imagePullPolicy\": \"IfNotPresent\",\n                              \"ports\": [\n                                {\n                                  \"containerPort\": 9080\n                                }\n                              ]\n                            }\n                          ]\n                        }\n                      }\n                    }\n                  }\n                ]\n  }\n",
+          "formUrlEncoded": [],
+          "multipartForm": [
+            {
+              "type": "file",
+              "name": "application",
+              "value": [
+                "/Users/i590000/personal/swarmchestrate/sample-application/application.yaml"
+              ],
+              "enabled": true
+            },
+            {
+              "type": "file",
+              "name": "cloud_svc",
+              "value": [
+                "/Users/i590000/personal/swarmchestrate/sample-application/productpage.yaml"
+              ],
+              "enabled": true
+            },
+            {
+              "type": "file",
+              "name": "fog_svc",
+              "value": [
+                "/Users/i590000/personal/swarmchestrate/sample-application/review-details.yaml"
+              ],
+              "enabled": true
+            },
+            {
+              "type": "file",
+              "name": "edge_svc",
+              "value": [
+                "/Users/i590000/personal/swarmchestrate/sample-application/ratings.yaml"
+              ],
+              "enabled": true
+            }
+          ],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Add cluster",
+      "filename": "Add cluster.bru",
+      "seq": 1,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/clusters",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"ip\": \"172.18.0.21\",\n  \"type\": \"cloud\",\n  \"role\": \"worker\"\n}\n",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Delete application",
+      "filename": "Delete application.bru",
+      "seq": 11,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/applications/APP_ID",
+        "method": "DELETE",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Delete cluster",
+      "filename": "Delete cluster.bru",
+      "seq": 5,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/clusters/CLUSTER_ID",
+        "method": "DELETE",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Get application",
+      "filename": "Get application.bru",
+      "seq": 8,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/applications/APP_ID",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Get cluster cfg",
+      "filename": "Get cluster cfg.bru",
+      "seq": 12,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/clusters/config",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Get cluster scheduled apps",
+      "filename": "Get cluster scheduled apps.bru",
+      "seq": 13,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/clusters/CLUSTER_ID/applications/scheduled",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Get cluster",
+      "filename": "Get cluster.bru",
+      "seq": 2,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/clusters/CLUSTER_ID",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "List applications",
+      "filename": "List applications.bru",
+      "seq": 9,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/applications",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [
+            {
+              "type": "file",
+              "name": "application",
+              "value": [
+                "/Users/i590000/personal/swarmchestrate/sample-application/application.yaml"
+              ],
+              "enabled": true
+            },
+            {
+              "type": "file",
+              "name": "cloud_svc",
+              "value": [
+                "/Users/i590000/personal/swarmchestrate/sample-application/productpage.yaml"
+              ],
+              "enabled": true
+            }
+          ],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "List clusters",
+      "filename": "List clusters.bru",
+      "seq": 3,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/clusters",
+        "method": "GET",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "none",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Update application",
+      "filename": "Update application.bru",
+      "seq": 10,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/applications/APP_ID",
+        "method": "PATCH",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "multipartForm",
+          "json": "{\n  \"name\": \"application-sample\",\n  \"labels\": {\n      \"swarmchestrate.tu-berlin.de/something\": \"something\"\n    },\n    \"qos\":\n      {\n        \"energy\": 1\n      },\n    \"cloud_svc\": [\n                  {\n                    \"apiVersion\": \"v1\",\n                    \"kind\": \"Service\",\n                    \"metadata\": {\n                      \"name\": \"details\",\n                      \"labels\": {\n                        \"app\": \"details\",\n                        \"service\": \"details\"\n                      }\n                    },\n                    \"spec\": {\n                      \"ports\": [\n                        {\n                          \"port\": 9080,\n                          \"name\": \"http\"\n                        }\n                      ],\n                      \"selector\": {\n                        \"app\": \"details\"\n                      }\n                    }\n                  },\n                  {\n                    \"apiVersion\": \"v1\",\n                    \"kind\": \"ServiceAccount\",\n                    \"metadata\": {\n                      \"name\": \"bookinfo-details\",\n                      \"labels\": {\n                        \"account\": \"details\"\n                      }\n                    }\n                  },\n                  {\n                    \"apiVersion\": \"apps/v1\",\n                    \"kind\": \"Deployment\",\n                    \"metadata\": {\n                      \"name\": \"details-v1\",\n                      \"labels\": {\n                        \"app\": \"details\",\n                        \"version\": \"v1\"\n                      }\n                    },\n                    \"spec\": {\n                      \"replicas\": 1,\n                      \"selector\": {\n                        \"matchLabels\": {\n                          \"app\": \"details\",\n                          \"version\": \"v1\"\n                        }\n                      },\n                      \"template\": {\n                        \"metadata\": {\n                          \"labels\": {\n                            \"app\": \"details\",\n                            \"version\": \"v1\"\n                          }\n                        },\n                        \"spec\": {\n                          \"serviceAccountName\": \"bookinfo-details\",\n                          \"containers\": [\n                            {\n                              \"name\": \"details\",\n                              \"image\": \"docker.io/istio/examples-bookinfo-details-v1:1.20.2\",\n                              \"imagePullPolicy\": \"IfNotPresent\",\n                              \"ports\": [\n                                {\n                                  \"containerPort\": 9080\n                                }\n                              ]\n                            }\n                          ]\n                        }\n                      }\n                    }\n                  }\n                ]\n  }\n",
+          "formUrlEncoded": [],
+          "multipartForm": [
+            {
+              "type": "file",
+              "name": "application",
+              "value": [
+                "/Users/i590000/personal/swarmchestrate/sample-application/application.yaml"
+              ],
+              "enabled": true
+            }
+          ],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Update cluster apps health",
+      "filename": "Update cluster apps health.bru",
+      "seq": 14,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/clusters/CLUSTER_ID/applications/APP_ID/status",
+        "method": "POST",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"status\": \"healthy\",\n  \"application_version\": \"0196ad0c-d034-7b3a-80ee-b19d9da0d13c\"\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Update cluster",
+      "filename": "Update cluster.bru",
+      "seq": 4,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/clusters/CLUSTER_ID",
+        "method": "PATCH",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"type\": \"fog\",\n  \"ip\": \"192.168.0.4\"\n}\n",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    },
+    {
+      "type": "http",
+      "name": "Upsert nodes",
+      "filename": "Upsert nodes.bru",
+      "seq": 6,
+      "request": {
+        "url": "{{base_url}}/swarmchestrate/api/v1/clusters/CLUSTER_ID/nodes",
+        "method": "PUT",
+        "headers": [],
+        "params": [],
+        "body": {
+          "mode": "json",
+          "json": "{\n  \"nodes\": [\n    {\n      \"name\": \"Node 1\",\n      \"cpu\": 4,\n      \"cpu_arch\": \"arm64\",\n      \"memory\": 16,\n      \"network_bandwidth\": 100,\n      \"ephemeral_storage\": 50,\n      \"energy\": 1,\n      \"pricing\": 0.25,\n      \"location\": \"Europe/Berlin\",\n      \"is_ready\": true,\n      \"is_schedulable\": true,\n      \"is_disk_pressure_exists\": true,\n      \"is_memory_pressure_exists\": true,\n      \"is_pid_pressure_exists\": true\n    },\n    {\n      \"name\": \"Node 2\",\n      \"cpu\": 4,\n      \"cpu_arch\": \"arm64\",\n      \"memory\": 16,\n      \"location\": \"Europe/Berlin\",\n      \"network_bandwidth\": 100,\n      \"ephemeral_storage\": 50,\n      \"energy\": 1,\n      \"pricing\": 0.25,\n      \"is_ready\": true,\n      \"is_schedulable\": true,\n      \"is_disk_pressure_exists\": true,\n      \"is_memory_pressure_exists\": true,\n      \"is_pid_pressure_exists\": true\n    }\n  ]\n}",
+          "formUrlEncoded": [],
+          "multipartForm": [],
+          "file": []
+        },
+        "script": {},
+        "vars": {},
+        "assertions": [],
+        "tests": "",
+        "docs": "",
+        "auth": {
+          "mode": "none"
+        }
+      }
+    }
+  ],
+  "activeEnvironmentUid": "7OMyWmXiGFbolX53YAi5L",
+  "environments": [
+    {
+      "variables": [
+        {
+          "name": "base_url",
+          "value": "http://172.18.0.8:80",
+          "enabled": true,
+          "secret": false,
+          "type": "text"
+        }
+      ],
+      "name": "swarmchestrate"
+    }
+  ],
+  "brunoConfig": {
+    "version": "1",
+    "name": "swarmchestrate",
+    "type": "collection",
+    "ignore": [
+      "node_modules",
+      ".git"
+    ],
+    "size": 0.009748458862304688,
+    "filesCount": 15
+  }
+}
