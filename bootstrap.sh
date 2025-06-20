@@ -16,7 +16,7 @@ OS=$(uname)
 
 # Display usage if no arguments are provided
 usage() {
-  echo "Usage: $0 {kb|swagger|kind_create|kind_delete|metallb|remove_metallb|ingress|ns|raft_lb|all}"
+  echo "Usage: $0 {kb|swagger|kind_create|kind_delete|ingress|ns|raft_lb|all}"
   exit 1
 }
 
