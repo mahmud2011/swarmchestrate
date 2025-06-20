@@ -3,7 +3,7 @@
 #!/bin/bash
 set -e
 
-KIND_IMAGE="kindest/node:v1.33.0"
+KIND_IMAGE="kindest/node:v1.33.1"
 
 # Default cluster counts (can be overridden via environment variables)
 NUM_CLOUD_CLUSTERS=${NUM_CLOUD_CLUSTERS:-3}
