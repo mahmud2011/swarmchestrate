@@ -12,7 +12,7 @@
 
 ## ☑️ Prerequisites
 
-- KB setup. Check [kb/README.md](./kb/README.md)
+- KB setup. Check [knowledge-base/README.md](./knowledge-base/README.md)
 - Docker
 - Kind (https://kind.sigs.k8s.io) – runs local Kubernetes clusters using Docker containers.
 - Kubernetes Cloud Provider for KIND (https://github.com/kubernetes-sigs/cloud-provider-kind) – provides the external IP address functionality for Kind clusters, enabling services to be exposed in a way that mimics real cloud providers.
