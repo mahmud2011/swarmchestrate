@@ -12,7 +12,7 @@
 
 ## ☑️ Prerequisites
 
-- KB setup. Check kb/README.md
+- KB setup. Check [kb/README.md](./kb/README.md)
 - Docker
 - Kind (https://kind.sigs.k8s.io) – runs local Kubernetes clusters using Docker containers.
 - Kubernetes Cloud Provider for KIND (https://github.com/kubernetes-sigs/cloud-provider-kind) – provides the external IP address functionality for Kind clusters, enabling services to be exposed in a way that mimics real cloud providers.
@@ -23,5 +23,5 @@
 ./bootstrap.sh all
 ```
 
-- For RLA deployment check resource-lead-agent/README.md
-- For RA deployment check resource-agent/README.md
+- For RLA deployment check [resource-lead-agent/README.md](./resource-lead-agent/README.md)
+- For RA deployment check [resource-agent/README.md](./resource-agent/README.md)
