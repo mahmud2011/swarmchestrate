@@ -14,3 +14,7 @@ resources:
   - cm.yaml
   - deployment.yaml
   - ingress.yaml
+images:
+  - name: ghcr.io/mahmud2011/swarmchestrate/resource-lead-agent
+    newName: ghcr.io/mahmud2011/swarmchestrate/resource-lead-agent
+    newTag: 0.1.1

@@ -11,3 +11,7 @@ resources:
   - clusterrole.yaml
   - clusterrolebinding.yaml
   - deployment.yaml
+images:
+  - name: ghcr.io/mahmud2011/swarmchestrate/resource-agent
+    newName: ghcr.io/mahmud2011/swarmchestrate/resource-agent
+    newTag: 0.1.1

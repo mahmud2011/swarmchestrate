@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres:17.4-alpine
+    image: postgres:17.5-alpine3.22
     container_name: postgres
     environment:
       POSTGRES_USER: foo
@@ -12,7 +12,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
-    image: dpage/pgadmin4:9.3.0
+    image: dpage/pgadmin4:9.4.0
     container_name: pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: foo@bar.com

@@ -3,7 +3,7 @@
 #!/bin/bash
 set -e
 
-KIND_IMAGE="kindest/node:v1.33.0"
+KIND_IMAGE="kindest/node:v1.33.1"
 
 # Default cluster counts (can be overridden via environment variables)
 NUM_CLOUD_CLUSTERS=${NUM_CLOUD_CLUSTERS:-3}
@@ -16,7 +16,7 @@ OS=$(uname)
 
 # Display usage if no arguments are provided
 usage() {
-  echo "Usage: $0 {kb|swagger|kind_create|kind_delete|metallb|remove_metallb|ingress|ns|raft_lb|all}"
+  echo "Usage: $0 {kb|swagger|kind_create|kind_delete|ingress|ns|raft_lb|all}"
   exit 1
 }
 
@@ -156,97 +156,6 @@ kind_delete() {
     echo "+++ kind_delete Complete"
 }
 
-# Deploys MetalLB in all clusters (creates metallb-system namespace if needed)
-metallb() {
-    echo "Deploying MetalLB in ${NUM_CLUSTERS} clusters"
-
-    BASE_SUBNET=$(docker network inspect kind -f '{{(index .IPAM.Config 0).Subnet}}')
-    echo "Base subnet: ${BASE_SUBNET}"
-
-    BASE_IP=$(echo "${BASE_SUBNET}" | cut -d'.' -f1-3)
-    START_OCTET=$(echo "${BASE_SUBNET}" | cut -d'.' -f4 | cut -d'/' -f1)
-
-    IPS_PER_CLUSTER=5
-    PROFILES=("energy" "cost" "performance")
-
-    for i in $(seq 1 ${NUM_CLUSTERS}); do
-        # Determine domain
-        if [ $i -le $NUM_CLOUD_CLUSTERS ]; then
-            DOMAIN="cloud"
-        elif [ $i -le $((NUM_CLOUD_CLUSTERS + NUM_FOG_CLUSTERS)) ]; then
-            DOMAIN="fog"
-        else
-            DOMAIN="edge"
-        fi
-
-        # Determine profile and full cluster name
-        PROFILE_INDEX=$(( (i - 1) % 3 ))
-        PROFILE="${PROFILES[$PROFILE_INDEX]}"
-        NAME="${DOMAIN}-${PROFILE}"
-
-        echo "Starting MetalLB deployment in ${NAME}"
-
-        kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml --context "${NAME}"
-
-        kubectl wait --namespace metallb-system \
-            --for=condition=ready pod \
-            --selector=app=metallb \
-            --timeout=300s \
-            --context "${NAME}"
-
-        START_IP=$((START_OCTET + (i - 1) * IPS_PER_CLUSTER + 1))
-        END_IP=$((START_IP + IPS_PER_CLUSTER - 1))
-        ADDR_RANGE="${BASE_IP}.${START_IP}-${BASE_IP}.${END_IP}"
-        echo "${NAME} will use address range: ${ADDR_RANGE}"
-
-        yq eval 'select(di == 0) | .spec.addresses = ["'"${ADDR_RANGE}"'"]' config/metallb-cr.yaml > /tmp/ipaddresspool.yaml
-        yq eval 'select(di == 1)' config/metallb-cr.yaml > /tmp/l2advertisement.yaml
-
-        kubectl apply -f /tmp/ipaddresspool.yaml --context "${NAME}"
-        kubectl apply -f /tmp/l2advertisement.yaml --context "${NAME}"
-
-        echo "----"
-    done
-
-    echo "+++ metallb Complete"
-}
-
-remove_metallb() {
-    echo "Removing MetalLB from ${NUM_CLUSTERS} clusters"
-
-    PROFILES=("energy" "cost" "performance")
-
-    for i in $(seq 1 ${NUM_CLUSTERS}); do
-        if [ $i -le $NUM_CLOUD_CLUSTERS ]; then
-            DOMAIN="cloud"
-        elif [ $i -le $((NUM_CLOUD_CLUSTERS + NUM_FOG_CLUSTERS)) ]; then
-            DOMAIN="fog"
-        else
-            DOMAIN="edge"
-        fi
-
-        PROFILE_INDEX=$(( (i - 1) % 3 ))
-        PROFILE="${PROFILES[$PROFILE_INDEX]}"
-        NAME="${DOMAIN}-${PROFILE}"
-
-        echo "Removing MetalLB from cluster: ${NAME}"
-
-        # Delete CRs if they exist
-        kubectl delete ipaddresspool --all --namespace metallb-system --context "${NAME}" 2>/dev/null
-        kubectl delete l2advertisement --all --namespace metallb-system --context "${NAME}" 2>/dev/null
-
-        # Delete MetalLB core components
-        kubectl delete -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml --context "${NAME}" 2>/dev/null
-
-        # Delete the namespace
-        kubectl delete namespace metallb-system --context "${NAME}" --ignore-not-found
-
-        echo "---"
-    done
-
-    echo "+++ remove_metallb Complete"
-}
-
 # Deploys ingress controllers
 ingress() {
     echo "Deploying ingress controller in ${NUM_CLUSTERS} clusters"
@@ -349,7 +258,6 @@ swagger() {
 # Runs the full setup in order
 all() {
     kind_create
-    # metallb
     ingress
     ns
     raft_lb
@@ -375,9 +283,6 @@ case "$COMMAND" in
         ;;
     kind_delete)
         kind_delete "$@"
-        ;;
-    metallb)
-        metallb "$@"
         ;;
     remove_metallb)
         remove_metallb "$@"
